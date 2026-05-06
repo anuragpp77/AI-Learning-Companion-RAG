@@ -1,0 +1,59 @@
+# ── Core API & Server ────────────────────────────────────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+starlette>=0.40.0
+python-multipart==0.0.9
+pydantic==2.7.1
+python-dotenv==1.0.1
+ 
+# ── AI / LLM Orchestration ───────────────────────────────────────────────────
+crewai==0.51.0
+crewai-tools==0.8.3
+langchain==0.2.5
+langchain-core==0.2.43
+langchain-community==0.2.5
+langchain-ollama==0.1.1
+langchain-openai==0.1.8
+langchain-groq==0.1.6
+ 
+# ── Embeddings & Vector Store ────────────────────────────────────────────────
+langchain-huggingface==0.0.3
+sentence-transformers>=2.6.0
+faiss-cpu
+ 
+# ── Frontend ─────────────────────────────────────────────────────────────────
+streamlit>=1.35.0
+plotly
+httpx
+ 
+# ── Document Loaders ─────────────────────────────────────────────────────────
+pypdf>=4.0.1
+docx2txt
+unstructured
+
+
+
+
+
+
+# # ── Core API & Server ────────────────────────────────────────────────────────
+# fastapi==0.111.0
+# uvicorn[standard]==0.29.0
+# python-multipart==0.0.9
+# pydantic==2.7.1
+# python-dotenv==1.0.1
+
+# # ── AI / LLM Orchestration ───────────────────────────────────────────────────
+# crewai==0.51.0
+# crewai-tools==0.8.3
+# langchain==0.2.5
+# langchain-community==0.2.5
+# langchain-ollama==0.1.1
+# langchain-openai==0.1.8       # optional: OpenAI backend
+# langchain-groq==0.1.6         # optional: Groq backend (fast, free tier)
+
+# # ── Embeddings & Vector Store ─────────────────────
+# # pip install langchain-core langchain-ollama
+# #pip install langchain-huggingface sentence-transformers
+# #pip install httpx
+# #pip install streamlit plotly
