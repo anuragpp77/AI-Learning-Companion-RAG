@@ -1,6 +1,6 @@
 """
-  AI-Learn Study Companion – restyled to match screenshot UI
-  Keeps all original functionality intact.
+AI Study Companion — Redesigned UI
+Warm cream + terracotta palette inspired by Mosey.AI
 """
 
 import json
@@ -16,228 +16,230 @@ BACKEND = os.getenv("BACKEND_URL", "http://localhost:8000")
 TIMEOUT = 180
 
 st.set_page_config(
-    page_title="Study Companion",
-    page_icon="📚",
+    page_title="StudyMind AI",
+    page_icon="📖",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ── Custom CSS ────────────────────────────────────────────────────────────────
-
+# ── Global CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-/* ── Root tokens ── */
+/* ── Root palette ── */
 :root {
-    --bg:           #F0EBE1;
-    --bg-sidebar:   #E8E2D8;
-    --surface:      #FDFAF6;
-    --surface-alt:  #F5F0E8;
-    --border:       #D9D2C7;
-    --border-light: #EAE4DA;
-    --text-primary: #1C1916;
-    --text-secondary: #6B6560;
-    --text-muted:   #9B958F;
-    --accent:       #C94B2D;
-    --accent-light: #F2E8E5;
-    --accent-hover: #A83A20;
-    --success:      #2C7A4B;
-    --warning:      #B8860B;
-    --radius-sm:    8px;
-    --radius-md:    14px;
-    --radius-lg:    20px;
-    --shadow-sm:    0 1px 3px rgba(0,0,0,0.07);
-    --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+    --cream:       #F5EDE2;
+    --cream-deep:  #EDE0D0;
+    --warm-white:  #FDFAF7;
+    --terracotta:  #C4703A;
+    --terra-light: #D4895A;
+    --terra-deep:  #A3561F;
+    --brown-dark:  #2C1A0E;
+    --brown-mid:   #6B4C30;
+    --brown-light: #9E7A58;
+    --border:      #E2D4C0;
+    --shadow:      rgba(44, 26, 14, 0.08);
+    --shadow-md:   rgba(44, 26, 14, 0.14);
 }
 
-/* ── Global reset ── */
-html, body, [data-testid="stAppViewContainer"] {
-    background-color: var(--bg) !important;
+/* ── App shell ── */
+html, body, [data-testid="stAppViewContainer"], .stApp {
+    background-color: var(--cream) !important;
     font-family: 'DM Sans', sans-serif !important;
-    color: var(--text-primary) !important;
+    color: var(--brown-dark) !important;
+}
+
+[data-testid="stAppViewContainer"] > .main {
+    background-color: var(--cream) !important;
 }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background-color: var(--bg-sidebar) !important;
+    background-color: var(--warm-white) !important;
     border-right: 1px solid var(--border) !important;
-}
-[data-testid="stSidebar"] > div:first-child {
-    padding-top: 1.25rem !important;
-}
-[data-testid="stSidebar"] .stMarkdown p,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] .stCaption {
-    color: var(--text-secondary) !important;
+    box-shadow: 2px 0 20px var(--shadow) !important;
 }
 
-/* Sidebar title */
-[data-testid="stSidebar"] h1 {
-    font-family: 'Lora', serif !important;
-    font-size: 1.3rem !important;
-    color: var(--text-primary) !important;
-    letter-spacing: -0.01em !important;
+[data-testid="stSidebar"] * {
+    color: var(--brown-dark) !important;
 }
 
-/* ── Main area ── */
-[data-testid="stMain"], .main .block-container {
-    background-color: var(--bg) !important;
-    padding-top: 1.5rem !important;
-    max-width: 860px !important;
+[data-testid="stSidebar"] .stMarkdown h1,
+[data-testid="stSidebar"] .stMarkdown h2,
+[data-testid="stSidebar"] .stMarkdown h3 {
+    font-family: 'Playfair Display', serif !important;
+    color: var(--terracotta) !important;
 }
 
-/* ── Typography ── */
+/* ── Headings ── */
 h1 {
-    font-family: 'Lora', serif !important;
-    font-size: 2.6rem !important;
+    font-family: 'Playfair Display', serif !important;
     font-weight: 600 !important;
-    letter-spacing: -0.03em !important;
-    color: var(--text-primary) !important;
-    line-height: 1.2 !important;
+    color: var(--brown-dark) !important;
+    letter-spacing: -0.5px !important;
 }
 h2, h3 {
-    font-family: 'Lora', serif !important;
-    color: var(--text-primary) !important;
-}
-p, li, span {
-    font-family: 'DM Sans', sans-serif !important;
-    color: var(--text-secondary) !important;
+    font-family: 'Playfair Display', serif !important;
+    color: var(--brown-mid) !important;
 }
 
-/* ── Buttons ── */
+/* ── Sidebar title block ── */
+.sidebar-brand {
+    padding: 1.2rem 0 0.4rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+}
+.sidebar-brand .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--terracotta) !important;
+    letter-spacing: -0.3px;
+}
+.sidebar-brand .brand-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    color: var(--brown-light) !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* ── Status badge ── */
+.status-badge {
+    background: var(--cream-deep);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--brown-mid) !important;
+    margin: 0.5rem 0 1rem;
+}
+.status-badge strong { color: var(--terracotta) !important; }
+
+/* ── All buttons ── */
 .stButton > button {
+    background: var(--warm-white) !important;
+    color: var(--brown-dark) !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
     font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.85rem !important;
     font-weight: 500 !important;
-    font-size: 0.875rem !important;
-    border-radius: var(--radius-sm) !important;
-    border: 1px solid var(--border) !important;
-    background: var(--surface) !important;
-    color: var(--text-primary) !important;
-    padding: 0.5rem 1rem !important;
-    transition: all 0.15s ease !important;
-    box-shadow: var(--shadow-sm) !important;
+    padding: 0.5rem 1.1rem !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 4px var(--shadow) !important;
 }
 .stButton > button:hover {
-    background: var(--surface-alt) !important;
-    border-color: var(--accent) !important;
-    color: var(--accent) !important;
+    background: var(--terracotta) !important;
+    color: #fff !important;
+    border-color: var(--terracotta) !important;
+    box-shadow: 0 4px 12px var(--shadow-md) !important;
     transform: translateY(-1px) !important;
-    box-shadow: var(--shadow-md) !important;
-}
-.stButton > button:active {
-    transform: translateY(0) !important;
 }
 
-/* Primary / process button */
-.stButton > button[kind="primary"] {
-    background: var(--accent) !important;
+/* ── Primary-style action button (Process & Index) ── */
+.stButton > button[kind="primary"],
+div[data-testid="column"] .stButton > button {
+    background: var(--terracotta) !important;
     color: #fff !important;
-    border-color: var(--accent) !important;
+    border-color: var(--terracotta) !important;
 }
-.stButton > button[kind="primary"]:hover {
-    background: var(--accent-hover) !important;
-    color: #fff !important;
-}
-
-/* ── File uploader ── */
-[data-testid="stFileUploader"] {
-    background: var(--surface) !important;
-    border: 1.5px dashed var(--border) !important;
-    border-radius: var(--radius-md) !important;
-    padding: 1rem !important;
-}
-[data-testid="stFileUploader"] label {
-    color: var(--text-secondary) !important;
+div[data-testid="column"] .stButton > button:hover {
+    background: var(--terra-deep) !important;
+    border-color: var(--terra-deep) !important;
 }
 
-/* ── Inputs ── */
+/* ── Text inputs & selectbox ── */
 .stTextInput > div > div > input,
-.stTextArea textarea {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius-sm) !important;
-    color: var(--text-primary) !important;
+.stSelectbox > div > div {
+    background-color: var(--warm-white) !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 12px !important;
+    color: var(--brown-dark) !important;
     font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 1px 6px var(--shadow) !important;
+    transition: border-color 0.2s !important;
 }
-.stTextInput > div > div > input:focus,
-.stTextArea textarea:focus {
-    border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(201,75,45,0.1) !important;
-    outline: none !important;
-}
-
-/* ── Selectbox ── */
-[data-testid="stSelectbox"] > div > div {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius-sm) !important;
-    color: var(--text-primary) !important;
-}
-
-/* ── Radio ── */
-[data-testid="stRadio"] > label {
-    color: var(--text-secondary) !important;
-}
-[data-testid="stRadio"] span {
-    color: var(--text-primary) !important;
-}
-
-/* ── Info / success / error ── */
-.stInfo, [data-testid="stAlert"][data-baseweb="notification"] {
-    background: var(--accent-light) !important;
-    border: 1px solid #DDB5A8 !important;
-    border-radius: var(--radius-sm) !important;
-    color: var(--text-primary) !important;
-}
-.stSuccess {
-    background: #E8F5ED !important;
-    border-color: #A8D4B8 !important;
-}
-.stError {
-    background: #FBEAEA !important;
+.stTextInput > div > div > input:focus {
+    border-color: var(--terracotta) !important;
+    box-shadow: 0 0 0 3px rgba(196, 112, 58, 0.12) !important;
 }
 
 /* ── Chat messages ── */
 [data-testid="stChatMessage"] {
-    background: var(--surface) !important;
-    border: 1px solid var(--border-light) !important;
-    border-radius: var(--radius-md) !important;
-    padding: 1rem 1.25rem !important;
+    background: var(--warm-white) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    padding: 1rem 1.2rem !important;
     margin-bottom: 0.75rem !important;
-    box-shadow: var(--shadow-sm) !important;
-}
-[data-testid="stChatMessage"][data-testid*="user"] {
-    background: var(--accent-light) !important;
-    border-color: #DDB5A8 !important;
+    box-shadow: 0 2px 10px var(--shadow) !important;
 }
 
-/* ── Chat input ── */
-[data-testid="stChatInput"] > div {
-    background: var(--surface) !important;
+[data-testid="stChatMessage"][data-testid*="user"] {
+    background: var(--cream-deep) !important;
+    border-color: var(--terracotta) !important;
+}
+
+/* ── Chat message text — force dark/black ── */
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] span,
+[data-testid="stChatMessage"] li,
+[data-testid="stChatMessage"] ol,
+[data-testid="stChatMessage"] ul,
+[data-testid="stChatMessage"] h1,
+[data-testid="stChatMessage"] h2,
+[data-testid="stChatMessage"] h3,
+[data-testid="stChatMessage"] h4,
+[data-testid="stChatMessage"] strong,
+[data-testid="stChatMessage"] em,
+[data-testid="stChatMessage"] code,
+[data-testid="stChatMessage"] .stMarkdown,
+[data-testid="stChatMessage"] .stMarkdown * {
+    color: #1A1008 !important;
+}
+
+/* ── Also fix the main content area markdown text ── */
+.main [data-testid="stMarkdownContainer"] p,
+.main [data-testid="stMarkdownContainer"] span,
+.main [data-testid="stMarkdownContainer"] li,
+.main [data-testid="stMarkdownContainer"] strong {
+    color: var(--brown-dark) !important;
+}
+
+/* ── Info / success / warning ── */
+.stAlert {
+    border-radius: 12px !important;
     border: 1px solid var(--border) !important;
-    border-radius: var(--radius-lg) !important;
-    box-shadow: var(--shadow-md) !important;
-}
-[data-testid="stChatInput"] textarea {
-    background: transparent !important;
-    color: var(--text-primary) !important;
     font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.85rem !important;
 }
-[data-testid="stChatInput"] textarea::placeholder {
-    color: var(--text-muted) !important;
+div[data-testid="stAlert"][kind="info"] {
+    background: rgba(196, 112, 58, 0.08) !important;
+    border-color: rgba(196, 112, 58, 0.25) !important;
+    color: var(--terra-deep) !important;
+}
+div[data-testid="stAlert"][kind="success"] {
+    background: rgba(60, 140, 80, 0.07) !important;
 }
 
 /* ── Expander ── */
-[data-testid="stExpander"] {
-    background: var(--surface) !important;
-    border: 1px solid var(--border-light) !important;
-    border-radius: var(--radius-sm) !important;
+.streamlit-expanderHeader {
+    background: var(--cream-deep) !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.85rem !important;
+    color: var(--brown-mid) !important;
 }
-[data-testid="stExpander"] summary {
-    color: var(--text-secondary) !important;
-    font-size: 0.875rem !important;
+.streamlit-expanderContent {
+    background: var(--warm-white) !important;
+    border: 1px solid var(--border) !important;
+    border-top: none !important;
+    border-radius: 0 0 10px 10px !important;
 }
 
 /* ── Divider ── */
@@ -248,185 +250,348 @@ hr {
 
 /* ── Metric cards ── */
 [data-testid="stMetric"] {
-    background: var(--surface) !important;
-    border: 1px solid var(--border-light) !important;
-    border-radius: var(--radius-md) !important;
-    padding: 1rem 1.25rem !important;
-    box-shadow: var(--shadow-sm) !important;
+    background: var(--warm-white) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    padding: 1rem 1.2rem !important;
+    box-shadow: 0 2px 8px var(--shadow) !important;
 }
 [data-testid="stMetricLabel"] {
-    color: var(--text-secondary) !important;
-    font-size: 0.8rem !important;
-    text-transform: uppercase !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.78rem !important;
+    color: var(--brown-light) !important;
     letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
 }
 [data-testid="stMetricValue"] {
-    font-family: 'Lora', serif !important;
-    color: var(--text-primary) !important;
+    font-family: 'Playfair Display', serif !important;
+    color: var(--terracotta) !important;
     font-size: 2rem !important;
-}
-
-/* ── Spinner ── */
-.stSpinner > div {
-    border-top-color: var(--accent) !important;
 }
 
 /* ── Dataframe ── */
 [data-testid="stDataFrame"] {
-    border-radius: var(--radius-sm) !important;
     border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
     overflow: hidden !important;
+}
+
+/* ── Spinner ── */
+.stSpinner > div {
+    border-color: var(--terracotta) var(--border) var(--border) !important;
+}
+
+/* ── Custom page hero ── */
+.page-hero {
+    padding: 1.8rem 2rem 1.2rem;
+    background: linear-gradient(135deg, var(--warm-white) 60%, var(--cream-deep));
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+.page-hero .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--brown-dark);
+    margin-bottom: 0.25rem;
+}
+.page-hero .hero-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--brown-light);
+}
+
+/* ── Follow-up chips ── */
+.followup-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+}
+.followup-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--brown-light);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ── Nav buttons in sidebar ── */
+[data-testid="stSidebar"] .stButton > button {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    padding: 0.6rem 1rem !important;
+    width: 100% !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: var(--brown-mid) !important;
+    font-size: 0.88rem !important;
+    font-weight: 400 !important;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+    background: var(--cream-deep) !important;
+    color: var(--terracotta) !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* ── Caption / small text ── */
+.stCaption, .caption {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.78rem !important;
+    color: var(--brown-light) !important;
+}
+
+/* ── Chat input footer bar (the dark strip at the bottom) ── */
+[data-testid="stBottom"],
+[data-testid="stBottom"] > div,
+[data-testid="stBottom"] > div > div,
+.stBottom,
+.stBottom > div,
+[data-testid="stChatInputContainer"],
+[data-testid="stChatInputContainer"] > div,
+div[class*="chatInputContainer"],
+div[class*="stChatInput"] {
+    background-color: var(--cream) !important;
+    border-top: 1px solid var(--border) !important;
+    box-shadow: none !important;
+}
+
+/* ── Chat input textarea itself ── */
+[data-testid="stChatInput"] textarea,
+[data-testid="stChatInputContainer"] textarea {
+    background-color: var(--warm-white) !important;
+    color: var(--brown-dark) !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 12px !important;
+    caret-color: var(--terracotta) !important;
+}
+[data-testid="stChatInput"] textarea:focus,
+[data-testid="stChatInputContainer"] textarea:focus {
+    border-color: var(--terracotta) !important;
+    box-shadow: 0 0 0 3px rgba(196,112,58,0.12) !important;
+}
+
+/* ── Chat send button ── */
+[data-testid="stChatInputContainer"] button,
+[data-testid="stChatInput"] button {
+    background-color: var(--terracotta) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+[data-testid="stChatInputContainer"] button:hover,
+[data-testid="stChatInput"] button:hover {
+    background-color: var(--terra-deep) !important;
+}
+
+/* ── File uploader — force white bg, remove dark overlay ── */
+[data-testid="stFileUploader"],
+[data-testid="stFileUploader"] > div,
+[data-testid="stFileUploader"] section,
+[data-testid="stFileUploader"] section > div,
+[data-testid="stFileUploaderDropzone"],
+[data-testid="stFileUploaderDropzone"] > div {
+    background-color: var(--warm-white) !important;
+    border: 1.5px dashed var(--border) !important;
+    border-radius: 12px !important;
+    color: var(--brown-mid) !important;
+}
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] small {
+    color: var(--brown-light) !important;
+}
+[data-testid="stFileUploaderDropzone"]:hover {
+    border-color: var(--terracotta) !important;
+    background-color: var(--cream-deep) !important;
+}
+/* Upload button inside the dropzone */
+[data-testid="stFileUploaderDropzone"] button {
+    background-color: var(--warm-white) !important;
+    border: 1.5px solid var(--border) !important;
+    color: var(--brown-dark) !important;
+    border-radius: 8px !important;
+}
+[data-testid="stFileUploaderDropzone"] button:hover {
+    background-color: var(--terracotta) !important;
+    color: #fff !important;
+    border-color: var(--terracotta) !important;
+}
+
+/* ── Radio buttons ── */
+/* Unselected circle */
+[data-testid="stRadio"] input[type="radio"] + div,
+.stRadio [data-testid="stMarkdownContainer"] + div {
+    border-color: var(--border) !important;
+}
+/* Selected circle fill */
+[data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child {
+    border-color: var(--terracotta) !important;
+    background-color: var(--terracotta) !important;
+}
+/* Radio label text */
+[data-testid="stRadio"] label span {
+    color: var(--brown-mid) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.88rem !important;
+}
+/* BaseWeb radio override */
+[role="radio"] {
+    border-color: var(--border) !important;
+}
+[role="radio"][aria-checked="true"] {
+    background-color: var(--terracotta) !important;
+    border-color: var(--terracotta) !important;
+}
+
+/* ── Selectbox dropdown panel & all options ── */
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] > div,
+div[data-baseweb="popover"] > div > div,
+div[data-baseweb="popover"] > div > div > div,
+div[data-baseweb="menu"],
+div[data-baseweb="menu"] > ul,
+div[data-baseweb="menu"] > div,
+ul[role="listbox"],
+ul[role="listbox"] > li,
+li[role="option"],
+li[role="option"] > div,
+li[role="option"] > div > div,
+li[role="option"] span {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    color: #1A1008 !important;
+    border-color: #E2D4C0 !important;
+}
+
+/* Hover state */
+li[role="option"]:hover,
+li[role="option"]:hover > div,
+li[role="option"]:hover span {
+    background-color: #EDE0D0 !important;
+    background: #EDE0D0 !important;
+    color: #C4703A !important;
+}
+
+/* Selected / highlighted option */
+li[aria-selected="true"],
+li[aria-selected="true"] > div,
+li[aria-selected="true"] span {
+    background-color: #F5EDE2 !important;
+    background: #F5EDE2 !important;
+    color: #C4703A !important;
+    font-weight: 600 !important;
+}
+
+/* Selectbox trigger box */
+div[data-baseweb="select"] > div,
+div[data-baseweb="select"] > div > div,
+div[data-baseweb="select"] span,
+[data-testid="stSelectbox"] > div > div {
+    background-color: #FDFAF7 !important;
+    color: #1A1008 !important;
+    border-color: #E2D4C0 !important;
+}
+
+/* Dropdown arrow */
+div[data-baseweb="select"] svg {
+    fill: #9E7A58 !important;
+    color: #9E7A58 !important;
+}
+
+/* ── Any remaining dark backgrounds ── */
+div[class*="block-container"],
+section[class*="main"] > div {
+    background-color: transparent !important;
+}
+
+/* ── Tooltip / popover dark overrides ── */
+div[data-baseweb="tooltip"],
+div[data-baseweb="tooltip"] * {
+    background-color: var(--brown-dark) !important;
+    color: var(--warm-white) !important;
+    border-radius: 8px !important;
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--terracotta); }
 
-/* ── Custom welcome screen cards ── */
-.quick-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 1.5rem 0;
-}
-.quick-card {
-    background: var(--surface);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    padding: 1.1rem 1.25rem;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    box-shadow: var(--shadow-sm);
-    text-align: left;
-}
-.quick-card:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-}
-.quick-card .icon {
-    font-size: 1.3rem;
-    margin-bottom: 0.4rem;
-    display: block;
-}
-.quick-card .label {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    display: block;
-}
-.quick-card .sublabel {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    display: block;
-    margin-top: 0.15rem;
-}
-
-/* ── Status pill ── */
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: var(--surface);
+/* ── Quiz cards ── */
+.quiz-card {
+    background: var(--warm-white);
     border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.3rem 1rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-bottom: 1.25rem;
-}
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.6; transform: scale(0.85); }
+    border-radius: 16px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px var(--shadow);
 }
 
-/* ── Sidebar file list ── */
-.kb-file {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 0.65rem 0.75rem;
-    background: var(--surface);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
-    margin-bottom: 8px;
-}
-.kb-file .fi-icon {
-    font-size: 1.1rem;
-    margin-top: 1px;
-    flex-shrink: 0;
-}
-.kb-file .fi-name {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 160px;
-    display: block;
-}
-.kb-file .fi-meta {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    display: block;
+/* ── Plotly charts ── */
+.js-plotly-plot .plotly {
+    border-radius: 14px !important;
 }
 
-/* ── Section subheader ── */
+/* ── Section label ── */
 .section-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
-    display: flex;
-    justify-content: space-between;
+    letter-spacing: 0.1em;
+    color: var(--brown-light);
+    margin-bottom: 0.4rem;
 }
 
-/* ── Context banner ── */
-.ctx-banner {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.35rem 0.85rem;
-    font-size: 0.82rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+/* ── Upload success pill ── */
+.stSuccess {
+    background: rgba(60,140,80,0.07) !important;
+    border: 1px solid rgba(60,140,80,0.2) !important;
+    border-radius: 12px !important;
 }
-.ctx-banner span { font-weight: 500; color: var(--text-primary); }
+.stError {
+    border-radius: 12px !important;
+}
+.stWarning {
+    background: rgba(196,112,58,0.07) !important;
+    border: 1px solid rgba(196,112,58,0.2) !important;
+    border-radius: 12px !important;
+    color: var(--terra-deep) !important;
+}
+
+/* ── Subheader ── */
+.stSubheader {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: var(--brown-light) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Hide Streamlit branding */
+#MainMenu, footer, header { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Session state ─────────────────────────────────────────────────────────────
-
 if "messages"   not in st.session_state: st.session_state.messages   = []
 if "followup"   not in st.session_state: st.session_state.followup   = []
 if "quiz_state" not in st.session_state: st.session_state.quiz_state = {}
 if "active_tab" not in st.session_state: st.session_state.active_tab = "chat"
 if "kb_ready"   not in st.session_state: st.session_state.kb_ready   = False
-if "files_list" not in st.session_state: st.session_state.files_list = []
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
-
 def api_get(path):
     try:
         r = httpx.get(f"{BACKEND}{path}", timeout=10)
@@ -459,11 +624,6 @@ def check_health():
     return {}
 
 
-def _file_icon(ftype: str) -> str:
-    icons = {"pdf": "📄", "docx": "📝", "pptx": "📊", "txt": "📃", "md": "📃"}
-    return icons.get(ftype.lower(), "📁")
-
-
 def parse_mcqs(raw):
     questions = []
     blocks = re.split(r"\n(?=Q\d+:)", raw.strip())
@@ -487,204 +647,149 @@ def parse_mcqs(raw):
 
 
 def _render_quiz(questions, prefix="q"):
-    st.markdown("### 📝 Quiz")
+    st.markdown('<div class="section-label">📝 Quiz</div>', unsafe_allow_html=True)
     for i, q in enumerate(questions):
-        st.markdown(f"**Q{i+1}. {q['question']}**")
-        key = f"{prefix}_q{i}"
-        choice = st.radio(
-            f"Q{i+1}",
-            options=list(q["options"].keys()),
-            format_func=lambda k, opts=q["options"]: f"{k}) {opts[k]}",
-            key=key,
-            label_visibility="collapsed",
-        )
-        check_key = f"{key}_checked"
-        if st.button("Check answer", key=f"{key}_btn"):
-            st.session_state.quiz_state[check_key] = choice
-        if st.session_state.quiz_state.get(check_key):
-            submitted = st.session_state.quiz_state[check_key]
-            correct = q.get("answer", "")
-            if submitted == correct:
-                st.success(f"✅ Correct! {q.get('explanation', '')}")
-            else:
-                st.error(f"❌ Incorrect. Correct answer: **{correct})**  \n{q.get('explanation', '')}")
-        st.markdown("---")
+        with st.container():
+            st.markdown(f'<div class="quiz-card">', unsafe_allow_html=True)
+            st.markdown(f"**Q{i+1}. {q['question']}**")
+            key = f"{prefix}_q{i}"
+            choice = st.radio(
+                f"Q{i+1}",
+                options=list(q["options"].keys()),
+                format_func=lambda k, opts=q["options"]: f"{k})  {opts[k]}",
+                key=key,
+                label_visibility="collapsed",
+            )
+            check_key = f"{key}_checked"
+            col_btn, _ = st.columns([1, 5])
+            with col_btn:
+                if st.button("Check", key=f"{key}_btn"):
+                    st.session_state.quiz_state[check_key] = choice
+            if st.session_state.quiz_state.get(check_key):
+                submitted = st.session_state.quiz_state[check_key]
+                correct = q.get("answer", "")
+                if submitted == correct:
+                    st.success(f"✅ Correct! {q.get('explanation', '')}")
+                else:
+                    st.error(f"❌ Incorrect. Correct answer: **{correct})**  \n{q.get('explanation', '')}")
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
-
 with st.sidebar:
-    st.markdown("# 📚 Study Companion")
-    st.caption("Multi-Agent AI Tutor")
+    # Brand
+    st.markdown("""
+    <div class="sidebar-brand">
+        <div class="brand-name">StudyMind AI</div>
+        <div class="brand-sub">Multi-Agent Learning Companion</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    health      = check_health()
-    provider    = health.get("llm_provider", "Unknown")
-    files_data  = api_get("/files")
-    files_list  = (files_data or {}).get("files", [])
+    # Health / status
+    health   = check_health()
+    provider = health.get("llm_provider", "—")
+    kb_status = "✅ Ready" if st.session_state.kb_ready else "⚠️ No documents yet"
+    st.markdown(f"""
+    <div class="status-badge">
+        <strong>LLM</strong> {provider}<br>
+        <strong>Knowledge Base</strong> {kb_status}
+    </div>
+    """, unsafe_allow_html=True)
 
-    # ── Upload area ──
-    st.markdown('<div class="section-label">Upload Material</div>', unsafe_allow_html=True)
+    # Upload
+    st.markdown('<div class="section-label">📁 Upload Study Material</div>', unsafe_allow_html=True)
+    uploaded = st.file_uploader(
+        "PDF, DOCX, TXT, PPTX",
+        type=["pdf", "docx", "txt", "md", "pptx"],
+        help="Your notes are embedded locally — not sent to any cloud.",
+        label_visibility="collapsed",
+    )
+    if uploaded:
+        if st.button("⬆️  Process & Index", use_container_width=True):
+            with st.spinner(f"Indexing {uploaded.name}…"):
+                result = api_post(
+                    "/upload",
+                    files={"file": (uploaded.name, uploaded.getvalue(), uploaded.type)},
+                )
+            if result:
+                st.success(f"**{uploaded.name}** indexed — {result.get('chunk_count', '?')} chunks added.")
+                st.session_state.kb_ready = True
+                time.sleep(1)
+                st.rerun()
 
-    upload_container = st.container()
-    with upload_container:
-        uploaded = st.file_uploader(
-            "PDF, DOCX, PPTX, TXT",
-            type=["pdf", "docx", "txt", "md", "pptx"],
-            label_visibility="collapsed",
-            help="Your notes are embedded locally — not sent to any cloud.",
-        )
-        if uploaded:
-            if st.button("⬆️ Process & Index", use_container_width=True):
-                with st.spinner(f"Indexing {uploaded.name}…"):
-                    result = api_post(
-                        "/upload",
-                        files={"file": (uploaded.name, uploaded.getvalue(), uploaded.type)},
-                    )
-                if result:
-                    st.success(f"✅ **{uploaded.name}** indexed — {result.get('chunk_count', '?')} chunks.")
-                    st.session_state.kb_ready = True
-                    time.sleep(1)
-                    st.rerun()
+    files_data = api_get("/files")
+    if files_data and files_data.get("files"):
+        with st.expander("📂 Indexed documents"):
+            for f in files_data["files"]:
+                st.markdown(f"- **{f['original_name']}** ({f['file_type'].upper()}) — {f['chunk_count']} chunks")
 
-    # ── Knowledge base file list ──
-    if files_list:
-        st.markdown("")
-        n = len(files_list)
-        st.markdown(
-            f'<div class="section-label"><span>Knowledge Base</span><span>{n} File{"s" if n != 1 else ""}</span></div>',
-            unsafe_allow_html=True,
-        )
-        for f in files_list:
-            icon  = _file_icon(f.get("file_type", ""))
-            name  = f.get("original_name", "Unknown")
-            ftype = f.get("file_type", "").upper()
-            chunks = f.get("chunk_count", "?")
-            st.markdown(
-                f"""
-                <div class="kb-file">
-                    <span class="fi-icon">{icon}</span>
-                    <div>
-                        <span class="fi-name" title="{name}">{name}</span>
-                        <span class="fi-meta">{ftype} &middot; {chunks} chunks</span>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    st.divider()
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Views</div>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button("💬 Chat",       use_container_width=True): st.session_state.active_tab = "chat"
-        if st.button("📊 Progress",   use_container_width=True): st.session_state.active_tab = "progress"
-    with c2:
-        if st.button("🃏 Flashcards", use_container_width=True): st.session_state.active_tab = "flashcards"
-        if st.button("🗑️ Clear",      use_container_width=True):
-            st.session_state.messages   = []
-            st.session_state.followup   = []
-            st.session_state.quiz_state = {}
-            st.rerun()
-
-    st.markdown("<br>", unsafe_allow_html=True)
+    # Settings
     st.markdown('<div class="section-label">⚙️ Settings</div>', unsafe_allow_html=True)
     mode      = st.selectbox("Mode",     ["simple", "exam"], label_visibility="collapsed")
     language  = st.selectbox("Language", ["English", "Malayalam", "Hindi", "Tamil"], label_visibility="collapsed")
+
+    col_l, col_r = st.columns(2)
+    with col_l:
+        st.markdown('<div class="section-label">Task</div>', unsafe_allow_html=True)
     task_type = st.radio("Task", ["learn", "quiz"], horizontal=True, label_visibility="collapsed")
+
+    st.divider()
+
+    # Navigation
+    st.markdown('<div class="section-label">Views</div>', unsafe_allow_html=True)
+    if st.button("💬  Chat",         use_container_width=True): st.session_state.active_tab = "chat"
+    if st.button("🃏  Flashcards",   use_container_width=True): st.session_state.active_tab = "flashcards"
+    if st.button("📊  Progress",     use_container_width=True): st.session_state.active_tab = "progress"
+    if st.button("🗑️  Clear Chat",  use_container_width=True):
+        st.session_state.messages  = []
+        st.session_state.followup  = []
+        st.session_state.quiz_state = {}
+        st.rerun()
 
 
 # ── Main area ─────────────────────────────────────────────────────────────────
-
 tab = st.session_state.active_tab
 
-# ── CHAT ──────────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────── CHAT ──────
 if tab == "chat":
+    st.markdown("""
+    <div class="page-hero">
+        <div class="hero-title">Ask Your AI Tutor</div>
+        <div class="hero-sub">Upload study material, then ask anything — explanations, quizzes, summaries.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Context banner (if files loaded, show first active file like screenshot)
-    if files_list:
-        active_file = files_list[0].get("original_name", "")
-        icon        = _file_icon(files_list[0].get("file_type", ""))
-        st.markdown(
-            f'<div class="ctx-banner">{icon} Context: <span>{active_file}</span></div>',
-            unsafe_allow_html=True,
-        )
-
-    # Welcome screen when no messages yet
-    if not st.session_state.messages:
-
-        # Status pill
-        if st.session_state.kb_ready:
-            st.markdown(
-                '<div style="text-align:center"><span class="status-pill"><span class="status-dot"></span>System Ready</span></div>',
-                unsafe_allow_html=True,
-            )
-        else:
-            st.markdown(
-                '<div style="text-align:center"><span class="status-pill" style="color:var(--text-muted)">⚠️ No documents yet</span></div>',
-                unsafe_allow_html=True,
-            )
-
-        st.markdown(
-            '<h1 style="text-align:center;margin:0.5rem 0 0.25rem">What shall we learn today?</h1>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<p style="text-align:center;color:var(--text-muted);margin-bottom:0.25rem">Your knowledge base is loaded and indexed. Choose a quick action below or type a question to begin your session.</p>',
-            unsafe_allow_html=True,
-        )
-
-        # Quick action cards (inject into chat input on click)
-        quick_actions = [
-            ("🔍", "Summarize key concepts", f"from {files_list[0]['original_name'] if files_list else 'my notes'}"),
-            ("📝", "Generate a 5-question quiz", "to test my knowledge"),
-            ("🔎", "Find explanations", "for the main topic in my notes"),
-            ("✨", "Explain like I'm 5", "the core ideas in Chapter 1"),
-        ]
-
-        st.markdown('<div class="quick-grid">', unsafe_allow_html=True)
-        cols = st.columns(2)
-        for idx, (icon, label, sub) in enumerate(quick_actions):
-            with cols[idx % 2]:
-                if st.button(
-                    f"{icon} **{label}**\n\n{sub}",
-                    key=f"qk_{idx}",
-                    use_container_width=True,
-                ):
-                    st.session_state._inject_query = label
-                    st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    else:
-        # Render conversation history
-        st.markdown('<h2 style="font-size:1.4rem;margin-bottom:1rem">💬 Chat</h2>', unsafe_allow_html=True)
-        for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                if msg["role"] == "assistant" and msg.get("task_type") == "quiz":
-                    questions = parse_mcqs(msg["content"])
-                    if questions:
-                        _render_quiz(questions, prefix=msg.get("id", "q"))
-                    else:
-                        st.markdown(msg["content"])
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            if msg["role"] == "assistant" and msg.get("task_type") == "quiz":
+                questions = parse_mcqs(msg["content"])
+                if questions:
+                    _render_quiz(questions, prefix=msg.get("id", "q"))
                 else:
                     st.markdown(msg["content"])
-                if msg.get("sources"):
-                    with st.expander("📄 Sources"):
-                        for s in msg["sources"]:
-                            st.markdown(f"- {s}")
+            else:
+                st.markdown(msg["content"])
+            if msg.get("sources"):
+                with st.expander("📄 Sources"):
+                    for s in msg["sources"]:
+                        st.markdown(f"- {s}")
 
-    # Follow-up chips
     if st.session_state.followup:
-        st.markdown("**💡 Suggested next questions:**")
-        fup_cols = st.columns(len(st.session_state.followup))
-        for i, (col, q) in enumerate(zip(fup_cols, st.session_state.followup)):
+        st.markdown('<div class="followup-label">💡 Suggested follow-ups</div>', unsafe_allow_html=True)
+        cols = st.columns(len(st.session_state.followup))
+        for i, (col, q) in enumerate(zip(cols, st.session_state.followup)):
             with col:
                 if st.button(q, key=f"fu_{i}", use_container_width=True):
                     st.session_state._inject_query = q
                     st.rerun()
 
-    # Chat input
+    if not st.session_state.kb_ready:
+        st.info("📁 Upload a study document in the sidebar to begin.")
+
     prompt = st.chat_input(
-        "Ask a question about your materials…",
+        "Ask anything about your study materials…",
         disabled=not st.session_state.kb_ready,
     )
 
@@ -692,16 +797,13 @@ if tab == "chat":
         prompt = st.session_state._inject_query
         del st.session_state._inject_query
 
-    if not st.session_state.kb_ready and not st.session_state.messages:
-        st.info("⬆️ Upload a study document in the sidebar to get started.")
-
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("🤔 Thinking… agents are working, this may take 20–40 s"):
+            with st.spinner("Thinking… agents are working, this may take 20–40 s"):
                 result = api_post("/ask", json={
                     "query":     prompt,
                     "mode":      mode,
@@ -740,16 +842,20 @@ if tab == "chat":
                 st.rerun()
 
 
-# ── FLASHCARDS ────────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────── FLASHCARDS ──
 elif tab == "flashcards":
-    st.markdown('<h1 style="font-size:2rem;margin-bottom:1.5rem">🃏 Flashcards</h1>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="page-hero">
+        <div class="hero-title">Flashcards</div>
+        <div class="hero-sub">Auto-generate and review spaced-repetition cards from your material.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([3, 1])
+    col1, col2 = st.columns([4, 1])
     with col1:
-        topic = st.text_input("Topic to generate flashcards for", placeholder="e.g. Laws of Thermodynamics")
+        topic = st.text_input("Topic", placeholder="e.g. Photosynthesis, Python decorators…", label_visibility="collapsed")
     with col2:
-        st.markdown("<br>", unsafe_allow_html=True)
-        gen = st.button("Generate", use_container_width=True, disabled=not st.session_state.kb_ready)
+        gen = st.button("Generate ✨", use_container_width=True, disabled=not st.session_state.kb_ready)
 
     if gen and topic:
         with st.spinner("Generating flashcards…"):
@@ -757,26 +863,31 @@ elif tab == "flashcards":
                 "query": topic, "mode": "simple", "language": "English", "task_type": "learn"
             })
         if result and result.get("flashcards"):
-            st.success(f"Generated {len(result['flashcards'])} flashcards!")
+            st.success(f"Generated {len(result['flashcards'])} flashcards for **{topic}**!")
 
-    filter_topic = st.text_input("Filter by topic (optional)", placeholder="Filter…")
+    filter_topic = st.text_input("Filter by topic", placeholder="Leave blank to show all…", label_visibility="collapsed")
     fc_data = api_get(f"/flashcards{'?topic=' + filter_topic if filter_topic else ''}")
 
     if fc_data and fc_data.get("flashcards"):
         cards = fc_data["flashcards"]
-        st.markdown(f"**{len(cards)} flashcard{'s' if len(cards) != 1 else ''}**")
+        st.markdown(f'<div class="section-label">{len(cards)} flashcards</div>', unsafe_allow_html=True)
         for card in cards:
             label = f"Q: {card['question'][:80]}…" if len(card['question']) > 80 else f"Q: {card['question']}"
             with st.expander(label):
                 st.markdown(f"**Answer:** {card['answer']}")
-                st.caption(f"Topic: {card['topic']} | Created: {card['created_at'][:10]}")
+                st.caption(f"Topic: {card['topic']} · Created: {card['created_at'][:10]}")
     else:
-        st.info("No flashcards yet. Generate some above!")
+        st.info("No flashcards yet — generate some above!")
 
 
-# ── PROGRESS ──────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────── PROGRESS ──
 elif tab == "progress":
-    st.markdown('<h1 style="font-size:2rem;margin-bottom:1.5rem">📊 Learning Progress</h1>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="page-hero">
+        <div class="hero-title">Learning Progress</div>
+        <div class="hero-sub">Track what you've studied and where you need more practice.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     stats_data = api_get("/stats")
 
@@ -799,22 +910,23 @@ elif tab == "progress":
 
         st.divider()
 
-        # Chart colours matching the cream theme
-        CHART_BG   = "rgba(0,0,0,0)"
-        CHART_BLUE = "#C94B2D"
-        FONT_COLOR = "#6B6560"
-        GRID_COLOR = "#D9D2C7"
+        # Chart styling to match palette
+        CHART_BG  = "rgba(0,0,0,0)"
+        FONT      = dict(family="DM Sans", color="#6B4C30")
+        GRIDCOLOR = "#E2D4C0"
 
         names  = [t["name"][:30] for t in topics[:10]]
         counts = [t["ask_count"] for t in topics[:10]]
-        fig1   = go.Figure(go.Bar(x=names, y=counts, marker_color=CHART_BLUE, marker_line_width=0))
+        fig1   = go.Figure(go.Bar(
+            x=names, y=counts,
+            marker=dict(color="#C4703A", opacity=0.85, line=dict(color="#A3561F", width=1)),
+        ))
         fig1.update_layout(
-            title="Most Studied Topics",
+            title=dict(text="Most Studied Topics", font=dict(family="Playfair Display", size=16, color="#2C1A0E")),
+            xaxis=dict(title="Topic", tickfont=FONT, gridcolor=GRIDCOLOR),
+            yaxis=dict(title="Times Asked", tickfont=FONT, gridcolor=GRIDCOLOR),
             paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG,
-            font=dict(family="DM Sans", color=FONT_COLOR),
-            xaxis=dict(gridcolor=GRID_COLOR, tickfont=dict(size=11)),
-            yaxis=dict(gridcolor=GRID_COLOR, title="Times Asked"),
-            height=340,
+            height=340, margin=dict(l=20, r=20, t=50, b=20),
         )
         st.plotly_chart(fig1, use_container_width=True)
 
@@ -822,15 +934,17 @@ elif tab == "progress":
         if quiz_topics:
             q_names  = [t["name"][:30] for t in quiz_topics]
             q_scores = [t["quiz_score"] for t in quiz_topics]
-            colors   = ["#C94B2D" if s < 50 else "#D4960A" if s < 75 else "#2C7A4B" for s in q_scores]
-            fig2     = go.Figure(go.Bar(x=q_names, y=q_scores, marker_color=colors, marker_line_width=0))
+            colors   = ["#e07070" if s < 50 else "#D4895A" if s < 75 else "#5aab6d" for s in q_scores]
+            fig2     = go.Figure(go.Bar(
+                x=q_names, y=q_scores,
+                marker=dict(color=colors, opacity=0.9, line=dict(color="#2C1A0E", width=0.5)),
+            ))
             fig2.update_layout(
-                title="Quiz Scores by Topic",
+                title=dict(text="Quiz Scores by Topic", font=dict(family="Playfair Display", size=16, color="#2C1A0E")),
+                xaxis=dict(title="Topic", tickfont=FONT, gridcolor=GRIDCOLOR),
+                yaxis=dict(title="Score (%)", tickfont=FONT, gridcolor=GRIDCOLOR, range=[0, 100]),
                 paper_bgcolor=CHART_BG, plot_bgcolor=CHART_BG,
-                font=dict(family="DM Sans", color=FONT_COLOR),
-                xaxis=dict(gridcolor=GRID_COLOR),
-                yaxis=dict(gridcolor=GRID_COLOR, title="Score (%)", range=[0, 100]),
-                height=340,
+                height=340, margin=dict(l=20, r=20, t=50, b=20),
             )
             st.plotly_chart(fig2, use_container_width=True)
 
@@ -840,6 +954,6 @@ elif tab == "progress":
         weak = [t for t in topics if t["quiz_attempts"] > 0 and t["quiz_score"] < 60]
         if weak:
             st.warning(
-                "**📌 Topics to review:**  \n"
+                "**📌 Topics needing review:**  \n"
                 + "  \n".join(f"- **{t['name']}** (score: {t['quiz_score']:.0f}%)" for t in weak[:5])
             )
