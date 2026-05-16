@@ -1,6 +1,6 @@
 """
-AI Study Companion — Redesigned UI
-Warm cream + terracotta palette inspired by Mosey.AI
+AI Study Companion —  UI
+
 """
 
 import json
