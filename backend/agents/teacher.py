@@ -1,9 +1,7 @@
 """
 backend/agents/teacher.py
 ──────────────────────────
-FIX (original bug #2):
-  • Agent now receives llm=get_llm() explicitly so Ollama/Groq/OpenAI
-    is used instead of silently defaulting to OpenAI.
+
 """
 
 from crewai import Agent
