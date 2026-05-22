@@ -1,13 +1,5 @@
 """
 backend/agents/evaluator.py
-────────────────────────────
-FIX (original bug #7):
-  • Old code: evaluator was in the Crew but had no task — it did nothing.
-  • New code: evaluator receives a structured quiz-generation task in
-              crew.py and produces parseable MCQ output.
-
-FIX (original bug #2):
-  • Agent now receives llm=get_llm() explicitly.
 """
 
 from crewai import Agent
