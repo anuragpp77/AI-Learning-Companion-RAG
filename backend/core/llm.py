@@ -1,19 +1,6 @@
 """
 backend/core/llm.py
 ───────────────────
-LLM factory that picks the right provider based on available env vars.
-
-FIX (original bug #2):
-  • Old code: get_llm() was defined but never passed to any Agent,
-              so all agents silently fell back to OpenAI.
-  • New code: get_llm() is called in every agent definition AND it
-              auto-detects the configured provider so no agent is
-              ever left without an explicit LLM.
-
-Provider priority (first match wins):
-  1. Groq     — fast, free tier, great for demos
-  2. OpenAI   — reliable, highest quality
-  3. Ollama   — local, privacy-first, no API key needed
 """
 
 import os
