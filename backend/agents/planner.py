@@ -1,15 +1,7 @@
 """
 backend/agents/planner.py
 ──────────────────────────
-FIX (original bug #7):
-  • Old code: planner was added to the Crew but assigned zero tasks —
-              it consumed memory and did absolutely nothing.
-  • New code: the planner receives a real task in crew.py that analyzes
-              the query and outputs a structured teaching plan that all
-              downstream agents use as context.
 
-FIX (original bug #2):
-  • Agent now receives llm=get_llm() explicitly.
 """
 
 from crewai import Agent
